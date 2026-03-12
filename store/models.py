@@ -3,6 +3,7 @@ from django.urls import reverse
 from categories.models import Category
 
 # Create your models here.
+
 class Products(models.Model):
     product_name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
@@ -14,8 +15,29 @@ class Products(models.Model):
     image=models.ImageField(upload_to='photos/products', blank=True)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
+   
+
     def get_url(self):
         return reverse('product_details', args=[self.category.slug, self.slug])
 
     def __str__(self):
         return self.product_name
+size_choices=(
+    ('S', 'Small'),
+    ('M', 'Medium'),
+    ('L', 'Large'),
+    ('XL', 'Extra Large'),
+    ('XXL', 'Double Extra Large'),
+)
+class Variations(models.Model):
+    product=models.ForeignKey(Products, on_delete=models.CASCADE,related_name='variations')
+    size=models.CharField(max_length=100, choices=size_choices, blank=True,null=True)
+    color=models.CharField(max_length=100, blank=True,null=True)
+    is_active=models.BooleanField(default=True)
+    created_date=models.DateTimeField(auto_now=True)
+    class Meta:
+        verbose_name='variation'
+        verbose_name_plural='variations'
+        unique_together=(('product', 'size', 'color'),)
+    def __str__(self):
+        return self.size

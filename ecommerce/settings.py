@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'categories',
     'accounts',
-    'store'
+    'store',
+    'cart'
 ]
 AUTH_USER_MODEL = 'accounts.Account'
 MIDDLEWARE = [
@@ -66,6 +67,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'categories.context_processors.list_categories',
+                'store.context_processors.total_items',
             ],
         },
     },
