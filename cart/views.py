@@ -17,11 +17,13 @@ def add_to_cart(request, product_id):
     product=Products.objects.get(id=product_id)
     size=None
     color=None
-    variation=None
+   
     if request.method == 'POST':
         size=request.POST['size']
         color=request.POST['color']
         variation=Variations.objects.filter(product=product, size=size, color=color, is_active=True).first()
+        if variation is None:
+            return redirect('cart')
        
 
   

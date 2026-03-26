@@ -40,8 +40,12 @@ INSTALLED_APPS = [
     'categories',
     'accounts',
     'store',
-    'cart'
+    'cart',
+     'crispy_forms',
+    'crispy_bootstrap5',
 ]
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 AUTH_USER_MODEL = 'accounts.Account'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -128,3 +132,11 @@ STATICFILES_DIRS = [
 ]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "samipython455@gmail.com"
+EMAIL_HOST_PASSWORD = "vazn atco kett ndji"
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "samipython455@gmail.com"

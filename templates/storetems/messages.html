@@ -1,0 +1,20 @@
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %} alert-dismissible fade show rounded-3 small auto-dismiss-alert"
+             role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<script>
+    setTimeout(function () {
+        document.querySelectorAll('.auto-dismiss-alert').forEach(function (alert) {
+            alert.classList.remove('show');
+            alert.classList.add('hide');
+            setTimeout(function () {
+                alert.remove();
+            }, 500);
+        });
+    }, 4000);
+</script>
