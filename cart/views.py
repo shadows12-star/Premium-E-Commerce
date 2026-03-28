@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 #import decimal
 from decimal import Decimal
-
+from django.contrib.auth.decorators import login_required
 from numpy import size
 # Create your views here.
 from .models import Cart, CartItem
@@ -91,3 +91,25 @@ def delete_cart_item(request, product_id,variation_id):
     cart_item=CartItem.objects.get(product=product, variation=variation, cart=cart)
     cart_item.delete()
     return redirect('cart')
+@login_required
+def checkout(request):
+   total=Decimal(0.00)
+   tax=Decimal(0.00)
+   try:
+        cart=Cart.objects.get(cart_id=create_cart_id(request))
+        cart_items=CartItem.objects.filter(cart=cart, is_active=True)
+        for cart_item in cart_items:
+             total+=cart_item.sub_total()
+        tax=total*Decimal(0.02)
+       
+       
+   except Cart.DoesNotExist:
+        cart_items=None
+        
+   context={
+        'total': total,
+        'cart_items': cart_items,
+        'tax': tax,
+   }
+    
+   return render(request, 'cart/checkout.html', context)
