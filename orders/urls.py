@@ -21,10 +21,13 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls.static import static
 from django.urls import include
+from .import views
 
 urlpatterns = [
-   path('',views.store, name='store'),
-   path('category/<slug:category_slug>/',views.store, name='products_by_category'),
-   path('category/<slug:category_slug>/<slug:product_slug>/',views.product_details, name='product_details'),
-   path('product/review/<int:product_id>/', views.submit_review, name='submit_review'),
-] 
+  
+    path('place_order/' , views.place_order, name='place_order'),
+    path('start_sslcommerz_payment/<str:order_number>/', views.start_sslcommerz_payment, name='start_sslcommerz_payment'),
+   path('sslcommerz/success/', views.sslcommerz_success, name='sslcommerz_success'),
+    path('sslcommerz/fail/', views.sslcommerz_fail, name='sslcommerz_fail'),
+    
+]

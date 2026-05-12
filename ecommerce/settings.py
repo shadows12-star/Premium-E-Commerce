@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'cart',
      'crispy_forms',
     'crispy_bootstrap5',
+    'orders',
 ]
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -140,3 +141,9 @@ EMAIL_HOST_USER = "samipython455@gmail.com"
 EMAIL_HOST_PASSWORD = "vazn atco kett ndji"
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "samipython455@gmail.com"
+
+#sslcommertzsetup
+SSL_COMMERZ_STORE_ID = 'samic69c8ff54329dd'
+SSL_COMMERZ_STORE_PASSWORD = 'samic69c8ff54329dd@ssl'
+SSL_COMMERTZ_PAYMENT_URL = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php'
+SSL_COMMERZ_VALIDATION_URL = 'https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php'

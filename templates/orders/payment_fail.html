@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <main class="col-md-8 col-lg-7">
+
+                <!-- Failure Message -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center py-5">
+                        <img src="{% static 'images/failure.jpg' %}" alt="Payment Failed" width="90" class="mb-3">
+                        <h2 class="text-danger fw-bold mb-3">Payment Failed</h2>
+                        <p class="mb-2 text-muted">
+                            Sorry, your payment could not be completed.
+                        </p>
+                        <p class="text-muted mb-0">
+                            Please try again or contact support if the problem continues.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Order Details -->
+                {% if order %}
+                <div class="card mt-4 shadow-sm border-0">
+                    <div class="card-header bg-white">
+                        <h4 class="mb-0">Order Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Order Number:</strong> {{ order.order_number }}</p>
+                        <p><strong>Name:</strong> {{ order.first_name }} {{ order.last_name }}</p>
+                        <p><strong>Email:</strong> {{ order.email }}</p>
+                        <p><strong>Phone:</strong> {{ order.phone }}</p>
+                        <p><strong>Address:</strong> {{ order.address_line_1 }}</p>
+
+                        {% if order.address_line_2 %}
+                            <p><strong>Address Line 2:</strong> {{ order.address_line_2 }}</p>
+                        {% endif %}
+
+                        <p><strong>City:</strong> {{ order.city }}</p>
+                        <p><strong>State:</strong> {{ order.state }}</p>
+                        <p><strong>Country:</strong> {{ order.country }}</p>
+                        <p><strong>Order Status:</strong> 
+                            <span class="badge bg-danger">{{ order.status }}</span>
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Payment Details -->
+                {% if payment %}
+                <div class="card mt-4 shadow-sm border-0">
+                    <div class="card-header bg-white">
+                        <h4 class="mb-0">Payment Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Payment ID:</strong> {{ payment.payment_id }}</p>
+                        <p><strong>Payment Method:</strong> {{ payment.payment_method }}</p>
+                        <p><strong>Amount:</strong> {{ payment.amount_paid }}</p>
+                        <p><strong>Payment Status:</strong> 
+                            <span class="badge bg-warning text-dark">{{ payment.status }}</span>
+                        </p>
+                        <p><strong>Date:</strong> {{ payment.created_at }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Action Buttons -->
+                <div class="card mt-4 shadow-sm border-0">
+                    <div class="card-body text-center">
+                        <a href="{% url 'checkout' %}" class="btn btn-danger me-2">Try Again</a>
+                        <a href="{% url 'store' %}" class="btn btn-outline-primary">Continue Shopping</a>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</section>
+{% endblock %}

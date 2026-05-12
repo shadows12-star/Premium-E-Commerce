@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-
+{% load crispy_forms_tags %}
 {% if total == 0 %}
 <div class="div"style="margin-top: 100px; margin-bottom: 100px;">
     <h5 class="text-center">Your cart is empty.</h5>
@@ -20,20 +20,10 @@
 
     <div class="card-body">
         <h4 class="card-title mb-4">Shipping address</h4>
-        <form method="post">
+        <form action="{% url 'place_order' %}" method="post">
             {% csrf_token %}
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Full name" name="full_name" required>
-            </div> 
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Phone number" name="phone_number" required>
-            </div> 
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="Email address" name="email_address" required>
-            </div> 
-            <div class="form-group">
-                <textarea class="form-control" placeholder="Shipping address" name="shipping_address" rows="3" required></textarea>
-            </div>
+            {{ form|crispy }}
+		  <button class="btn btn-primary btn-block" type="submit"> Place Order </button>
         </form>
     </div> <!-- card-body.// -->
 </div> <!-- card.// -->
@@ -82,7 +72,8 @@
 		<div class="card">
 		<div class="card-body">
 			
-			<a href="{% url 'checkout' %}" class="btn btn-primary btn-block"> Place Order </a>
+		
+	
 			<a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
 		</div> <!-- card-body.// -->
 		</div> <!-- card.// -->

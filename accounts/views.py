@@ -12,6 +12,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
+from cart.models import Cart, CartItem
+from cart.views import create_cart_id
 # Create your views here.
 def login(request):
     if request.method == 'POST':
@@ -21,6 +23,17 @@ def login(request):
             user = authenticate(request, email=email, password=password)
             print(user)
             if user is not None:
+                try:                    
+                    cart = Cart.objects.get(cart_id=create_cart_id(request))
+                    cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+                    if cart_items.exists():
+                         for item in cart_items:
+                            item.user = user
+                            item.cart = None
+                            item.save()
+                    
+                except Cart.DoesNotExist:
+                    pass
                 auth_login(request, user)
                 messages.success(request, 'You have successfully logged in.')
                 return redirect('profile') 

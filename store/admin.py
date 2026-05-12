@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Products,Variations
+from .models import ProductReview, Products,Variations
 # Register your models here.
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('product_name', 'price', 'stock', 'is_available', 'created_date', 'modified_date')
@@ -15,3 +15,8 @@ class VariationAdmin(admin.ModelAdmin):
     list_filter = ('is_active', 'created_date')
     search_fields = ('product__product_name',)
 admin.site.register(Variations, VariationAdmin)
+class ProductReviewAdmin(admin.ModelAdmin):
+    list_display = ('product', 'user', 'rating', 'created_at')
+    list_filter = ('created_at',)
+    search_fields = ('product__product_name', 'user__username')
+admin.site.register(ProductReview, ProductReviewAdmin)

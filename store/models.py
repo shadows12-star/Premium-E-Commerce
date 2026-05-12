@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from categories.models import Category
+from ecommerce import settings
 
 # Create your models here.
 
@@ -41,3 +42,19 @@ class Variations(models.Model):
         unique_together=(('product', 'size', 'color'),)
     def __str__(self):
         return self.size
+rating_choices=(
+    (1, '1 Star'),
+    (2, '2 Stars'),
+    (3, '3 Stars'),
+    (4, '4 Stars'),
+    (5, '5 Stars'),
+)
+class ProductReview(models.Model):
+    product=models.ForeignKey(Products, on_delete=models.CASCADE, related_name='reviews')
+    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    review=models.TextField(max_length=500,blank=True,null=True)
+    rating=models.IntegerField(choices=rating_choices)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return f'{self.user.username} - {self.product.product_name}' 
