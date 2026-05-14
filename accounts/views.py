@@ -1,10 +1,11 @@
 from django.contrib import messages
-
+from orders.models import Order, OrderProduct
+from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.shortcuts import redirect, render
 from .forms import RegistrationForm
-from .models import Account
-from django.contrib.auth import authenticate, login as auth_login
+from .models import Account, UserProfile
+from django.contrib.auth import authenticate, login as auth_login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from .utils import send_password_reset_email, send_verification_email
 from django.urls import reverse
@@ -14,8 +15,10 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.http import urlsafe_base64_encode
 from cart.models import Cart, CartItem
 from cart.views import create_cart_id
+from .forms import UserProfileForm
 # Create your views here.
 def login(request):
+    next_url=request.GET.get('next')or request.POST.get('next')
     if request.method == 'POST':
             email = request.POST.get('email')
             password = request.POST.get('password')
@@ -36,7 +39,7 @@ def login(request):
                     pass
                 auth_login(request, user)
                 messages.success(request, 'You have successfully logged in.')
-                return redirect('profile') 
+                return redirect(next_url) if next_url else redirect('profile')
             else:
                messages.error(request, 'Invalid email or password.')
                return redirect('login')
@@ -93,8 +96,21 @@ def activate(request, uidb64, token):
     return redirect("register")
 @login_required
 def profile(request):
+    orders = Order.objects.filter(user=request.user)
     
-    return render(request, 'accounts/profile.html')
+    order_products = OrderProduct.objects.filter(order__in=orders)
+    total_price=0
+    for order_product in order_products:
+        total_price+=order_product.product.price*order_product.quantity
+
+
+    return render(request, 'accounts/profile.html', {
+        'orders': orders,
+        'order_products': order_products,
+        'total_price': total_price,
+        'order_count': order_products.count(),
+
+    })
 
 def forgot_password(request):
     if request.method == 'POST':
@@ -134,5 +150,70 @@ def password_reset_confirm(request, uidb64, token):
     else:
         messages.error(request, 'Password reset link is invalid or expired.')
         return redirect('forgot_password')
+def User_profile(request):
     
     
+    if request.method == 'POST':
+       try:
+            profile = UserProfile.objects.get(user=request.user)
+            form = UserProfileForm(request.POST, request.FILES, instance=profile)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Your profile has been updated.')
+                return redirect('edit_profile')
+       except UserProfile.DoesNotExist:
+            form = UserProfileForm(request.POST, request.FILES)
+            if form.is_valid():
+                new_profile = form.save(commit=False)
+                new_profile.user = request.user
+                new_profile.save()
+                messages.success(request, 'Your profile has been created.')
+                return redirect('edit_profile')
+    else:
+        try:
+            profile = UserProfile.objects.get(user=request.user)
+            form = UserProfileForm(instance=profile)
+        except UserProfile.DoesNotExist:
+            form = UserProfileForm()
+   
+    return render(request, 'accounts/edit_profile.html', {'form': form})
+@login_required(login_url='login')
+def change_password(request):
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        user = request.user
+
+        if not user.check_password(current_password):
+            messages.error(request, 'Your current password is incorrect.')
+            return redirect('change_password')
+
+        if new_password != confirm_password:
+            messages.error(request, 'New password and confirm password do not match.')
+            return redirect('change_password')
+
+
+        user.set_password(new_password)
+        user.save()
+
+       
+        update_session_auth_hash(request, user)
+
+        messages.success(request, 'Your password has been changed successfully.')
+        return redirect('profile')
+
+    return render(request, 'accounts/change_password.html')
+def Order_details(request, order_number):
+    order = Order.objects.get(order_number=order_number)
+    order_products = OrderProduct.objects.filter(order=order)
+    total_price=0
+    for order_product in order_products:
+        total_price+=order_product.product.price*order_product.quantity
+    context={
+        'order':order,
+        'order_products':order_products,
+        'total_price':total_price,
+    }
+    return render(request, 'accounts/order_details.html', context)

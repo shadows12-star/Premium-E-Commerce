@@ -55,5 +55,7 @@ class OrderProduct(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
     def __str__(self):
         return self.product.product_name
+    def total_price(self):
+        return self.product.price * self.quantity
     
 

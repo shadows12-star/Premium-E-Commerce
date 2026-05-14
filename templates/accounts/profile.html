@@ -1,96 +1,293 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="section-conten padding-y bg">
 
-<div class="container">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  .order-page-wrapper {
+    font-family: 'DM Sans', sans-serif;
+    background: #f4f6f9;
+    min-height: 100vh;
+    padding: 2.5rem 0;
+  }
+
+  .order-card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .order-card .card-header {
+    background: linear-gradient(135deg, #1a1f36 0%, #2d3561 100%);
+    color: #fff;
+    padding: 1.2rem 1.8rem;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+  }
+
+  .order-card .card-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #fff;
+  }
+
+  .order-card .card-body {
+    padding: 1.6rem 1.8rem 0.8rem;
+    border-bottom: 1px solid #f0f2f7;
+  }
+
+  .delivery-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8a94a6;
+    margin-bottom: 0.4rem;
+  }
+
+  .delivery-info {
+    font-size: 0.9rem;
+    color: #3d4560;
+    line-height: 1.7;
+  }
+
+  .order-table-wrap {
+    padding: 0.4rem 0 0;
+  }
+
+  .order-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.875rem;
+  }
+
+  .order-table thead {
+    background: #f7f8fc;
+  }
+
+  .order-table thead th {
+    padding: 0.85rem 1.2rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8a94a6;
+    border-bottom: 2px solid #edf0f7;
+    white-space: nowrap;
+  }
+
+  .order-table tbody tr {
+    transition: background 0.18s ease;
+    border-bottom: 1px solid #f0f2f7;
+  }
+
+  .order-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .order-table tbody tr:hover {
+    background: #f7f8fc;
+  }
+
+  .order-table td {
+    padding: 1rem 1.2rem;
+    vertical-align: middle;
+    color: #3d4560;
+  }
+
+  .cell-order-id {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: #8a94a6;
+    white-space: nowrap;
+  }
+
+  .product-thumb {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #edf0f7;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: block;
+  }
+
+  .product-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #1a1f36;
+    margin-bottom: 2px;
+  }
+
+  .product-unit-price {
+    font-size: 0.8rem;
+    color: #8a94a6;
+  }
+
+  .qty-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f0f2f9;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-size: 0.8rem;
+    color: #3d4560;
+    font-weight: 500;
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    background: #e6f9f0;
+    color: #1e9e68;
+  }
+
+  .status-pill.pending {
+    background: #fff4e5;
+    color: #d08500;
+  }
+
+  .row-total {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2d3561;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .order-summary-footer {
+    background: #f7f8fc;
+    padding: 1.2rem 1.8rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 2rem;
+    align-items: center;
+    border-top: 2px solid #edf0f7;
+    flex-wrap: wrap;
+  }
+
+  .summary-item {
+    text-align: right;
+  }
+
+  .summary-item .summary-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8a94a6;
+    margin-bottom: 2px;
+  }
+
+  .summary-item .summary-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1a1f36;
+  }
+
+  .summary-item.total-price .summary-value {
+    color: #2d3561;
+    font-size: 1.3rem;
+  }
+</style>
+
+<section class="order-page-wrapper">
+  <div class="container">
+
     {% include 'storetems/messages.html' %}
-	<div class="row">
-	<aside class="col-md-3">
-		<!--   SIDEBAR   -->
-		<ul class="list-group">
-			<a class="list-group-item active" href="#"> My order history </a>
-			<a class="list-group-item" href="#"> Transactions </a>
-			<a class="list-group-item" href="#"> Return and refunds </a>
-			<a class="list-group-item" href="#">Settings </a>
-			<a class="list-group-item" href="#"> My Selling Items </a>
-			<a class="list-group-item" href="#"> Received orders </a>
-		</ul>
-		<br>
-		<a class="btn btn-light btn-block" href="{% url 'logout' %}"> <i class="fa fa-power-off"></i> <span class="text">Log out</span> </a> 
-		<!--   SIDEBAR .//END   -->
-	</aside>
-	<main class="col-md-9">
-		<article class="card">
-		<header class="card-header">
-			<strong class="d-inline-block mr-3">Order ID: 6123456789</strong>
-			<span>Order Date: 16 December 2018</span>
-		</header>
-		<div class="card-body">
-			<div class="row"> 
-				<div class="col-md-8">
-					<h6 class="text-muted">Delivery to</h6>
-					<p>Michael Jackson <br>  
-					Phone +1234567890 Email: myname@pixsellz.com <br>
-			    	Location: Home number, Building name, Street 123,  Tashkent, UZB <br> 
-			    	P.O. Box: 100123
-			 		</p>
-				</div>
-				<div class="col-md-4">
-					<h6 class="text-muted">Payment</h6>
-					<span class="text-success">
-						<i class="fab fa-lg fa-cc-visa"></i>
-					    Visa  **** 4216  
-					</span>
-					<p>Subtotal: $356 <br>
-					 Shipping fee:  $56 <br> 
-					 <span class="b">Total:  $456 </span>
-					</p>
-				</div>
-			</div> <!-- row.// -->
-		</div> <!-- card-body .// -->
-		<div class="table-responsive">
-		<table class="table table-hover">
-			<tr>
-				<td width="65">
-					<img src="../images/items/1.jpg" class="img-xs border">
-				</td>
-				<td> 
-					<p class="title mb-0">Product name goes here </p>
-					<var class="price text-muted">USD 145</var>
-				</td>
-				<td> Seller <br> Nike clothing </td>
-				<td width="250"> <a href="#" class="btn btn-outline-primary">Track order</a> <a href="#" class="btn btn-light"> Details </a> </td>
-			</tr>
-			<tr>
-				<td>
-					<img src="../images/items/2.jpg" class="img-xs border">
-				</td>
-				<td> 
-					<p class="title mb-0">Another name goes here </p>
-					<var class="price text-muted">USD 15</var>
-				</td>
-				<td> Seller <br> ABC shop </td>
-				<td> <a href="#" class="btn btn-outline-primary">Track order</a> <a href="#" class="btn btn-light"> Details </a> </td>
-			</tr>
-			<tr>
-				<td>
-					<img src="../images/items/3.jpg" class="img-xs border">
-				</td>
-				<td> 
-					<p class="title mb-0">The name of the product  goes here </p>
-					<var class="price text-muted">USD 145</var>
-				</td>
-				<td> Seller <br> Wallmart </td>
-				<td> <a href="#" class="btn btn-outline-primary">Track order</a> <a href="#" class="btn btn-light"> Details </a> </td>
-			</tr>
-		</table>
-		</div> <!-- table-responsive .end// -->
-		</article> <!-- order-group.// --> 
-	</main>
-</div> <!-- row.// -->
-</div>
 
+    <!-- ✅ Both sidebar and main must be INSIDE .row -->
+    <div class="row">
 
+      {% include 'accounts/profile_sidebar.html' %}
+
+      <main class="col-md-9">
+        <article class="card order-card">
+
+          <header class="card-header">
+            <h2>Your Recent Orders</h2>
+          </header>
+
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-8">
+                <h6 class="delivery-label">Delivery to</h6>
+                <p class="delivery-info">
+                  {{ request.user.first_name }} {{ request.user.last_name }}<br>
+                  Phone {{ request.user.phone_number }}&nbsp;&nbsp;Email: {{ request.user.email }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-responsive order-table-wrap">
+            <table class="table order-table">
+              <thead>
+                <tr>
+                  <th>Order Ref</th>
+                  <th></th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Status</th>
+                  <th style="text-align:right">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for order in order_products %}
+                        <tr>
+                          <td class="cell-order-id"><a href="{% url 'order_details' order.order.order_number %}">#{{ order.order.order_number }}</a></td>
+                  <td width="65">
+                    <img src="{{ order.product.image.url }}" class="product-thumb">
+                  </td>
+                  <td>
+                    <p class="product-name mb-0">{{ order.product.product_name }}</p>
+                    <var class="product-unit-price">${{ order.product.price }}</var>
+                  </td>
+                  <td>
+                    <span class="qty-badge">× {{ order.quantity }}</span>
+                  </td>
+                  <td>
+                    <span class="status-pill {% if not order.is_ordered %}pending{% endif %}">
+                      {% if order.is_ordered %}Paid{% else %}Pending{% endif %}
+                    </span>
+                  </td>
+                  <td class="row-total">${{ order.total_price }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="order-summary-footer">
+            <div class="summary-item">
+              <div class="summary-label">Total Orders</div>
+              <div class="summary-value">{{ order_count }}</div>
+            </div>
+            <div class="summary-item total-price">
+              <div class="summary-label">Order Total</div>
+              <div class="summary-value">${{ total_price }}</div>
+            </div>
+          </div>
+
+        </article>
+      </main>
+
+    </div><!-- /.row -->
+  </div><!-- /.container -->
 </section>
+
 {% endblock %}
-<!-- ========================= SECTION CONTENT END// ========================= -->

@@ -1,0 +1,466 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  .order-details-wrapper {
+    font-family: 'DM Sans', sans-serif;
+    background: #f4f6f9;
+    min-height: 100vh;
+    padding: 2.5rem 0 4rem;
+  }
+
+  .order-details-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+    overflow: hidden;
+    border: none;
+  }
+
+  .order-details-header {
+    background: linear-gradient(135deg, #1a1f36 0%, #2d3561 100%);
+    padding: 1.3rem 2rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .order-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .order-title-icon {
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a8b4ff;
+  }
+
+  .order-title h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .order-title p {
+    margin: 0.15rem 0 0;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.65);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    background: #e6f9f0;
+    color: #1e9e68;
+  }
+
+  .status-pill.pending {
+    background: #fff4e5;
+    color: #d08500;
+  }
+
+  .order-details-body {
+    padding: 2rem;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .info-box {
+    background: #f7f8fc;
+    border: 1px solid #edf0f7;
+    border-radius: 14px;
+    padding: 1.1rem 1.2rem;
+  }
+
+  .info-box h6 {
+    margin: 0 0 0.75rem;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+
+  .info-box p {
+    margin: 0.3rem 0;
+    color: #1a1f36;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .info-muted {
+    color: #6b7280;
+    font-size: 0.82rem;
+  }
+
+  .order-table-wrap {
+    overflow-x: auto;
+    border: 1px solid #edf0f7;
+    border-radius: 14px;
+  }
+
+  .order-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+  }
+
+  .order-table thead {
+    background: #f7f8fc;
+  }
+
+  .order-table th {
+    padding: 0.9rem 1rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #6b7280;
+    border-bottom: 1px solid #edf0f7;
+  }
+
+  .order-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f0f2f7;
+    vertical-align: middle;
+    color: #1a1f36;
+    font-size: 0.9rem;
+  }
+
+  .order-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .product-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .product-img {
+    width: 58px;
+    height: 58px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 1px solid #edf0f7;
+    background: #f7f8fc;
+  }
+
+  .product-name {
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+  }
+
+  .variation-text {
+    color: #6b7280;
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+
+  .qty-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 30px;
+    border-radius: 8px;
+    background: #eef2ff;
+    color: #1a56db;
+    font-weight: 700;
+  }
+
+  .price-text {
+    font-family: 'DM Mono', monospace;
+    font-weight: 600;
+  }
+
+  .summary-box {
+    margin-top: 1.5rem;
+    margin-left: auto;
+    max-width: 360px;
+    background: #f7f8fc;
+    border: 1px solid #edf0f7;
+    border-radius: 14px;
+    padding: 1.2rem;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.45rem 0;
+    color: #3d4560;
+    font-size: 0.9rem;
+  }
+
+  .summary-row strong {
+    color: #1a1f36;
+  }
+
+  .summary-row.total {
+    border-top: 1px solid #dde3ef;
+    margin-top: 0.55rem;
+    padding-top: 0.9rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .summary-row.total span:last-child {
+    color: #1a56db;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.4rem;
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    background: #fff;
+    border: 1px solid #dbe2ef;
+    color: #1a56db;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .back-btn:hover {
+    background: #eef2ff;
+    color: #1a56db;
+    text-decoration: none;
+  }
+
+  .empty-order {
+    padding: 2rem;
+    text-align: center;
+    color: #6b7280;
+  }
+
+  @media (max-width: 768px) {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .order-details-header,
+    .order-details-body {
+      padding: 1.3rem;
+    }
+
+    .summary-box {
+      max-width: 100%;
+    }
+  }
+</style>
+
+<section class="order-details-wrapper">
+  <div class="container">
+
+    {% include 'storetems/messages.html' %}
+
+    <div class="row">
+
+      {% include 'accounts/profile_sidebar.html' %}
+
+      <main class="col-md-9">
+        <div class="order-details-card">
+
+          <div class="order-details-header">
+            <div class="order-title">
+              <div class="order-title-icon">
+                <i class="fas fa-receipt"></i>
+              </div>
+
+              <div>
+                <h4>Order Details</h4>
+                <p>Order No: {{ order.order_number }}</p>
+              </div>
+            </div>
+
+            {% if order.is_ordered %}
+              <span class="status-pill">
+                <i class="fas fa-check-circle"></i> Paid
+              </span>
+            {% else %}
+              <span class="status-pill pending">
+                <i class="fas fa-clock"></i> Not Paid
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="order-details-body">
+
+            <div class="info-grid">
+
+              <div class="info-box">
+                <h6>Customer Information</h6>
+                <p><strong>Name:</strong> {{ order.first_name }} {{ order.last_name }}</p>
+                <p><strong>Email:</strong> {{ order.email }}</p>
+                <p><strong>Phone:</strong> {{ order.phone }}</p>
+              </div>
+
+              <div class="info-box">
+                <h6>Delivery Address</h6>
+                <p>{{ order.address_line_1 }}</p>
+
+                {% if order.address_line_2 %}
+                  <p>{{ order.address_line_2 }}</p>
+                {% endif %}
+
+                <p>{{ order.city }}, {{ order.state }}, {{ order.country }}</p>
+
+                {% if order.order_note %}
+                  <p class="info-muted"><strong>Note:</strong> {{ order.order_note }}</p>
+                {% endif %}
+              </div>
+
+              <div class="info-box">
+                <h6>Order Information</h6>
+                <p><strong>Order Date:</strong> {{ order.created_at|date:"M d, Y" }}</p>
+                <p><strong>Order Status:</strong> {{ order.status }}</p>
+                <p><strong>IP:</strong> {{ order.ip }}</p>
+              </div>
+
+              <div class="info-box">
+                <h6>Payment Information</h6>
+
+                {% if order.payment %}
+                  <p><strong>Payment ID:</strong> {{ order.payment.payment_id }}</p>
+                  <p><strong>Method:</strong> {{ order.payment.payment_method }}</p>
+                  <p><strong>Status:</strong> {{ order.payment.status }}</p>
+                {% else %}
+                  <p class="info-muted">No payment information available.</p>
+                {% endif %}
+              </div>
+
+            </div>
+
+            <div class="order-table-wrap">
+              <table class="order-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Variation</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th style="text-align: right;">Total</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for order_product in order_products %}
+                    <tr>
+                      <td>
+                        <div class="product-cell">
+                          {% if order_product.product.image %}
+                            <img src="{{ order_product.product.image.url }}" alt="{{ order_product.product.product_name }}" class="product-img">
+                          {% else %}
+                            <div class="product-img"></div>
+                          {% endif %}
+
+                          <div>
+                            <div class="product-name">
+                              {{ order_product.product.product_name }}
+                            </div>
+                            <div class="variation-text">
+                              Product ID: {{ order_product.product.id }}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td>
+                        {% if order_product.variations %}
+                          <div class="variation-text">
+                            {% if order_product.variations.color %}
+                              <div><strong>Color:</strong> {{ order_product.variations.color }}</div>
+                            {% endif %}
+
+                            {% if order_product.variations.size %}
+                              <div><strong>Size:</strong> {{ order_product.variations.size }}</div>
+                            {% endif %}
+                          </div>
+                        {% else %}
+                          <span class="variation-text">No variation</span>
+                        {% endif %}
+                      </td>
+
+                      <td>
+                        <span class="price-text">${{ order_product.product_price|floatformat:2 }}</span>
+                      </td>
+
+                      <td>
+                        <span class="qty-badge">{{ order_product.quantity }}</span>
+                      </td>
+
+                      <td style="text-align: right;">
+                        <span class="price-text">${{ order_product.total_price|floatformat:2 }}</span>
+                      </td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="5">
+                        <div class="empty-order">
+                          No products found for this order.
+                        </div>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="summary-box">
+              <div class="summary-row">
+                <span>Subtotal</span>
+                <strong>${{ total_price|floatformat:2 }}</strong>
+              </div>
+
+              <div class="summary-row">
+                <span>Tax</span>
+                <strong>${{ order.tax|floatformat:2 }}</strong>
+              </div>
+
+              <div class="summary-row total">
+                <span>Grand Total</span>
+                <span>${{ order.order_total|floatformat:2 }}</span>
+              </div>
+            </div>
+
+            <a href="javascript:history.back()" class="back-btn">
+              <i class="fas fa-arrow-left"></i> Back
+            </a>
+
+          </div>
+
+        </div>
+      </main>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

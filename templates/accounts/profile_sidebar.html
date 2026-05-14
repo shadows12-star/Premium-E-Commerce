@@ -1,0 +1,129 @@
+{% load static %}
+{% block content %}
+
+<style>
+  .sidebar-wrapper {
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── Nav list ── */
+  .sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: #ffffff;
+    border: 1px solid #e8ecf4;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(26,31,54,0.06);
+  }
+
+  .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 1.15rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #5a6480;
+    text-decoration: none;
+    border-bottom: 1px solid #f0f3f9;
+    transition: background 0.16s ease, color 0.16s ease, padding-left 0.16s ease;
+    position: relative;
+  }
+
+  .sidebar-nav a:last-child {
+    border-bottom: none;
+  }
+
+  /* Blue left-bar indicator on hover */
+  .sidebar-nav a::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #1a56db;
+    border-radius: 0 3px 3px 0;
+    opacity: 0;
+    transition: opacity 0.16s ease;
+  }
+
+  .sidebar-nav a:hover {
+    background: #eff6ff;
+    color: #1a56db;
+    padding-left: 1.4rem;
+  }
+
+  .sidebar-nav a:hover::before {
+    opacity: 1;
+  }
+
+  /* Active state — only when class is explicitly set via Django template */
+  .sidebar-nav a.active {
+    background: #eff6ff;
+    color: #1a56db;
+    font-weight: 600;
+  }
+
+  .sidebar-nav a.active::before {
+    opacity: 1;
+  }
+
+  /* ── Logout button ── */
+  .sidebar-logout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: #ffffff;
+    border: 1.5px solid #e8ecf4;
+    border-radius: 11px;
+    font-size: 0.875rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    color: #5a6480;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    box-shadow: 0 1px 4px rgba(26,31,54,0.05);
+  }
+
+  .sidebar-logout:hover {
+    background: #fff1f2;
+    color: #dc2626;
+    border-color: #fecaca;
+    box-shadow: 0 2px 10px rgba(220,38,38,0.10);
+  }
+
+  .sidebar-logout i {
+    font-size: 0.85rem;
+  }
+</style>
+
+<aside class="col-md-3 sidebar-wrapper">
+
+  <ul class="sidebar-nav">
+    <a href="{% url 'profile' %}">
+      <i class="fas fa-box-open"></i> My Order History
+    </a>
+    <a href="{% url 'edit_profile' %}">
+      <i class="fas fa-user-edit"></i> Edit Profile
+    </a>
+    <a href="{% url 'change_password' %}">
+      <i class="fas fa-lock"></i> Change Password
+    </a>
+  </ul>
+
+  <a class="sidebar-logout" href="{% url 'logout' %}">
+    <i class="fa fa-power-off"></i>
+    <span>Log out</span>
+  </a>
+
+</aside>
+
+{% endblock %}

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0^art&n1rorq$^j$)x71^s@a754-v6xw21c7se($9z2^%xts6('
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -56,9 +57,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
-]
+    'accounts.middleware.SessionTimeoutMiddleware',
 
+]
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 ROOT_URLCONF = 'ecommerce.urls'
 
 TEMPLATES = [
@@ -134,16 +136,16 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "samipython455@gmail.com"
-EMAIL_HOST_PASSWORD = "vazn atco kett ndji"
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = "samipython455@gmail.com"
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='samipython455@gmail.com')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
 #sslcommertzsetup
-SSL_COMMERZ_STORE_ID = 'samic69c8ff54329dd'
-SSL_COMMERZ_STORE_PASSWORD = 'samic69c8ff54329dd@ssl'
-SSL_COMMERTZ_PAYMENT_URL = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php'
-SSL_COMMERZ_VALIDATION_URL = 'https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php'
+SSL_COMMERZ_STORE_ID = config('SSL_COMMERZ_STORE_ID')
+SSL_COMMERZ_STORE_PASSWORD = config('SSL_COMMERZ_STORE_PASSWORD')
+SSL_COMMERTZ_PAYMENT_URL = config('SSL_COMMERTZ_PAYMENT_URL')
+SSL_COMMERZ_VALIDATION_URL = config('SSL_COMMERZ_VALIDATION_URL')

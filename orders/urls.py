@@ -29,5 +29,5 @@ urlpatterns = [
     path('start_sslcommerz_payment/<str:order_number>/', views.start_sslcommerz_payment, name='start_sslcommerz_payment'),
    path('sslcommerz/success/', views.sslcommerz_success, name='sslcommerz_success'),
     path('sslcommerz/fail/', views.sslcommerz_fail, name='sslcommerz_fail'),
-    
+    path('success/<str:order_number>/', views.order_success, name='order_success'),
 ]

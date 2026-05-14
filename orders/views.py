@@ -1,4 +1,6 @@
 import decimal
+
+from django.urls import reverse
 from store.models import Products, Variations
 from django.shortcuts import redirect, render
 from cart.models import CartItem
@@ -23,6 +25,7 @@ def place_order(request):
         total=cart_item.product.price * cart_item.quantity
         grand_total+=total
         tax=grand_total * decimal.Decimal('0.18')
+        grand_total+=tax
     if cart_count <= 0:
         return redirect('')
     if request.method == 'POST':
@@ -146,11 +149,15 @@ def sslcommerz_success(request):
     send_order_confirmation_email(order)
     
 
+    return redirect(reverse('order_success', kwargs={'order_number': order.order_number}))
+@login_required
+def order_success(request, order_number):
+    order = get_object_or_404(Order, order_number=order_number, user=request.user, is_ordered=True)
+    payment = order.payment
     return render(request, 'orders/payment_success.html', {
         'order': order,
         'payment': payment,
-    })
-
+    }) 
 # orders/views.py
 from django.shortcuts import render
 from django.http import HttpResponse

@@ -36,6 +36,16 @@
 			<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{ product.image.url }}"> </a>
 			<figcaption class="info-wrap">
 				<a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
+		          {% if product.avg_rating %}
+    <div style="color: #f5c518; font-size: 16px;">
+        {% for i in "12345" %}
+            {% if forloop.counter <= product.avg_rating|floatformat:0 %}★{% else %}☆{% endif %}
+        {% endfor %}
+        <small class="text-muted">({{ product.avg_rating|floatformat:1 }})</small>
+    </div>
+    {% else %}
+    <small class="text-muted">No reviews yet</small>
+    {% endif %}
 				<div class="price mt-1">${{ product.price }}</div> <!-- price-wrap.// -->
 			</figcaption>
 		</div>

@@ -40,6 +40,7 @@ class Variations(models.Model):
         verbose_name='variation'
         verbose_name_plural='variations'
         unique_together=(('product', 'size', 'color'),)
+    
     def __str__(self):
         return self.size
 rating_choices=(
@@ -58,3 +59,12 @@ class ProductReview(models.Model):
     updated_at=models.DateTimeField(auto_now=True)
     def __str__(self):
         return f'{self.user.username} - {self.product.product_name}' 
+    
+class ProductGallery(models.Model):
+    product=models.ForeignKey(Products, on_delete=models.CASCADE, related_name='gallery')
+    image=models.ImageField(upload_to='photos/products', blank=True)
+    class Meta:
+        verbose_name='productgallery'
+        verbose_name_plural='product gallery'
+    def __str__(self):
+        return self.product.product_name
